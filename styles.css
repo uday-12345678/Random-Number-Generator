@@ -1,0 +1,58 @@
+:root{
+	--bg:#f6f7fb;
+	--card:#ffffff;
+	--accent:#2b6ef6;
+	--muted:#6b7280;
+	--success:#16a34a;
+	--error:#dc2626;
+}
+*{box-sizing:border-box}
+body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);margin:0;padding:24px;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.container{width:100%;max-width:520px;background:var(--card);padding:20px;border-radius:10px;box-shadow:0 6px 20px rgba(8,15,30,0.08)}
+h1{margin:0 0 8px;font-size:1.4rem}
+.instructions{margin:0 0 16px;color:var(--muted)}
+.controls{display:flex;gap:8px;margin-bottom:12px}
+#guessInput{flex:1;padding:10px;border:1px solid #e6e9ef;border-radius:6px;font-size:1rem}
+#guessBtn,#restartBtn{padding:10px 12px;border-radius:6px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+#restartBtn{background:#64748b}
+#restartBtn:disabled,#guessBtn:disabled{opacity:0.6;cursor:default}
+.message{min-height:28px;margin-bottom:10px;padding:8px;border-radius:6px}
+.message.error{background:#fee2e2;color:var(--error)}
+.message.success{background:#ecfdf5;color:var(--success)}
+.message.low{background:#eef2ff;color:var(--accent)}
+.message.high{background:#fff7ed;color:#d97706}
+.message.close{background:linear-gradient(90deg,#fff7e6,#fffaf0);color:#b45309}
+.meta{display:flex;gap:16px;color:var(--muted);font-size:0.95rem}
+.hint{margin-top:14px;color:var(--muted);font-size:0.85rem}
+
+@media (max-width:420px){.controls{flex-direction:column}#guessBtn,#restartBtn{width:100%}}
+
+/* Header */
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.theme-toggle{background:transparent;border:0;font-size:1.1rem;cursor:pointer}
+
+/* Dice visual */
+.visual{display:flex;justify-content:center;margin:6px 0 12px}
+.spinner{width:56px;height:56px;border-radius:12px;background:linear-gradient(180deg,#fff 0%,#f3f4f6 100%);display:grid;place-items:center;box-shadow:0 6px 18px rgba(11,22,66,0.08)}
+.dot{width:14px;height:14px;background:var(--accent);border-radius:50%;transition:transform .18s ease}
+.spinner.spinning{box-shadow:0 14px 30px rgba(11,22,66,0.12)}
+.spinner.spinning .dot{animation:bounce 0.9s cubic-bezier(.2,.8,.2,1) infinite}
+@keyframes bounce{
+	0%{transform:translateY(0) scale(1)}
+	30%{transform:translateY(-12px) scale(1.15)}
+	60%{transform:translateY(-4px) scale(0.98)}
+	100%{transform:translateY(0) scale(1)}
+}
+
+@media (max-width:420px){.spinner{width:48px;height:48px}.dot{width:12px;height:12px}}
+
+/* Theme: dark */
+:root{transition:background .2s ease,color .2s ease}
+.dark{--bg:#0b1220;--card:#071025;--accent:#6ea8fe;--muted:#9aa4b2;--success:#34d399;--error:#fb7185}
+.dark body{background:var(--bg)}
+.dark .container{background:linear-gradient(180deg,#071025,#071620);box-shadow:0 8px 28px rgba(2,6,23,0.6)}
+.dark h1{color:#e6eefc}
+.dark #guessInput{background:#071425;border:1px solid rgba(255,255,255,0.06);color:#e6eefc}
+.dark .theme-toggle{color:#e6eefc}
+
+

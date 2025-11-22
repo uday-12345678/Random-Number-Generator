@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Guess the Number</title>
+        <link rel="stylesheet" href="styles.css">
+        <script src="script.js" defer></script>
+</head>
+<body>
+    <main class="container">
+        <header class="top">
+            <h1>Guess the Number</h1>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+        </header>
+        <p class="instructions">I'm thinking of a number between <span id="min">0</span> and <span id="max">100</span>. Can you guess it?</p>
+
+        <div class="controls">
+            <input id="guessInput" type="number" inputmode="numeric" placeholder="Enter your guess" />
+            <button id="guessBtn" type="button">Check</button>
+            <button id="restartBtn" type="button">Restart</button>
+        </div>
+
+        <div class="visual">
+            <div class="spinner" id="spinner" aria-hidden="true">
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <div id="message" class="message" aria-live="polite"></div>
+
+        <div class="meta">
+            <div>Attempts: <span id="attempts">0</span></div>
+            <div>Previous guesses: <span id="history">—</span></div>
+        </div>
+
+        <footer class="hint">Tip: Use the input above and press <strong>Check</strong>.</footer>
+    </main>
+</body>
+</html>
