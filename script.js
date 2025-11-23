@@ -59,6 +59,8 @@ function checkGuess() {
     if (diff === 0) {
         setMessage(`Congratulations! You guessed ${secret} in ${attempts} attempts.`, 'success');
         disableInput(true);
+        // celebration: confetti + sound
+        celebrate();
         return;
     }
 
@@ -96,7 +98,75 @@ function restart() {
     updateMeta();
     disableInput(false);
     guessInput.focus();
-    console.log('New secret (dev):', secret);
+        // remove any leftover confetti
+        const existing = document.querySelectorAll('.confetti-container');
+        existing.forEach(n => n.remove());
+        console.log('New secret (dev):', secret);
+}
+
+// CELEBRATION: confetti DOM and a short hurrah sound via WebAudio
+function celebrate() {
+    try {
+        createConfetti();
+        playHurrah();
+    } catch (e) {
+        // fail silently if audio/DOM blocked
+        console.warn('Celebrate failed', e);
+    }
+}
+
+function createConfetti() {
+    const container = document.querySelector('.container') || document.body;
+    const confettiRoot = document.createElement('div');
+    confettiRoot.className = 'confetti-container';
+    // create many pieces with random colors/positions
+    const colors = ['#f97316','#f43f5e','#10b981','#60a5fa','#a78bfa','#f59e0b'];
+    const count = 40;
+    for (let i = 0; i < count; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti-piece';
+        const w = 6 + Math.floor(Math.random() * 10);
+        el.style.width = w + 'px';
+        el.style.height = (w * 1.6) + 'px';
+        el.style.background = colors[Math.floor(Math.random() * colors.length)];
+        el.style.left = Math.random() * 100 + '%';
+        el.style.transform = `translateY(-10vh) rotate(${Math.random() * 360}deg)`;
+        // random delay so pieces start at slightly different times
+        el.style.animationDelay = (Math.random() * 300) + 'ms';
+        confettiRoot.appendChild(el);
+    }
+    // append and auto-remove
+    container.appendChild(confettiRoot);
+    setTimeout(() => {
+        confettiRoot.classList.add('confetti-fade');
+        setTimeout(() => confettiRoot.remove(), 2000);
+    }, 1800);
+}
+
+function playHurrah() {
+    // short sequence using WebAudio
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+    // create three oscillators for a short chord
+    const freqs = [520, 660, 780];
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.18, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+    gain.connect(ctx.destination);
+    freqs.forEach((f, i) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = i === 0 ? 'sawtooth' : 'triangle';
+        o.frequency.setValueAtTime(f, now);
+        g.gain.setValueAtTime(0.6 / (i + 1), now);
+        o.connect(g);
+        g.connect(gain);
+        o.start(now);
+        o.stop(now + 1.0 + Math.random() * 0.3);
+    });
 }
 
 // Rolling animation: play animation then evaluate
