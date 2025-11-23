@@ -98,17 +98,20 @@ function restart() {
     updateMeta();
     disableInput(false);
     guessInput.focus();
-        // remove any leftover confetti
-        const existing = document.querySelectorAll('.confetti-container');
-        existing.forEach(n => n.remove());
-        console.log('New secret (dev):', secret);
+    // remove any leftover confetti or overlays
+    const existing = document.querySelectorAll('.confetti-container, .hurrah-overlay');
+    existing.forEach(n => n.remove());
+    console.log('New secret (dev):', secret);
 }
 
 // CELEBRATION: confetti DOM and a short hurrah sound via WebAudio
 function celebrate() {
     try {
-        createConfetti();
+        console.log('celebrate: start');
+        const root = createConfetti();
+        showHurrahOverlay();
         playHurrah();
+        console.log('celebrate: confetti created', !!root);
     } catch (e) {
         // fail silently if audio/DOM blocked
         console.warn('Celebrate failed', e);
@@ -116,31 +119,69 @@ function celebrate() {
 }
 
 function createConfetti() {
-    const container = document.querySelector('.container') || document.body;
+    // create a full-viewport fixed container so confetti falls from top across the page
     const confettiRoot = document.createElement('div');
     confettiRoot.className = 'confetti-container';
+    // ensure full-viewport overlay
+    confettiRoot.style.position = 'fixed';
+    confettiRoot.style.inset = '0';
+    confettiRoot.style.pointerEvents = 'none';
+    confettiRoot.style.zIndex = '9999';
     // create many pieces with random colors/positions
     const colors = ['#f97316','#f43f5e','#10b981','#60a5fa','#a78bfa','#f59e0b'];
-    const count = 40;
+    const count = 80; // slightly more pieces for visibility
     for (let i = 0; i < count; i++) {
         const el = document.createElement('div');
         el.className = 'confetti-piece';
-        const w = 6 + Math.floor(Math.random() * 10);
+        const w = 6 + Math.floor(Math.random() * 12);
         el.style.width = w + 'px';
         el.style.height = (w * 1.6) + 'px';
         el.style.background = colors[Math.floor(Math.random() * colors.length)];
-        el.style.left = Math.random() * 100 + '%';
-        el.style.transform = `translateY(-10vh) rotate(${Math.random() * 360}deg)`;
+        // spread across the full viewport width
+        el.style.left = (Math.random() * 100) + '%';
+        // start slightly above the viewport (use px to avoid vh quirks)
+        el.style.top = (-50 - Math.random() * 150) + 'px';
+        el.style.transform = `rotate(${Math.random() * 360}deg)`;
         // random delay so pieces start at slightly different times
-        el.style.animationDelay = (Math.random() * 300) + 'ms';
+        const delay = (Math.random() * 300) + 'ms';
+        el.style.animationDelay = delay;
+        // hint to browser for smoother animation
+        el.style.willChange = 'transform, opacity';
+        // ensure animation runs even if stylesheet loads later
+        el.style.animation = `confetti-fall 1.8s cubic-bezier(.2,.7,.2,1) ${delay} forwards, confetti-spin 1.2s linear ${delay} infinite`;
         confettiRoot.appendChild(el);
     }
-    // append and auto-remove
-    container.appendChild(confettiRoot);
+    // append to body so it covers the whole page
+    document.body.appendChild(confettiRoot);
+    console.log('createConfetti: created', confettiRoot.children.length, 'pieces');
+    // debug: log first few pieces computed styles to verify animations are applied
+    for (let i = 0; i < Math.min(4, confettiRoot.children.length); i++) {
+        const c = confettiRoot.children[i];
+        const cs = window.getComputedStyle(c);
+        console.log(`piece[${i}] left=${c.style.left} top=${c.style.top} anim=${cs.animation}`);
+    }
+    // fade and remove after the animation
     setTimeout(() => {
         confettiRoot.classList.add('confetti-fade');
-        setTimeout(() => confettiRoot.remove(), 2000);
+        setTimeout(() => confettiRoot.remove(), 2200);
     }, 1800);
+    // return container so callers can inspect/remove it if needed
+    return confettiRoot;
+}
+
+function showHurrahOverlay() {
+    // big centered overlay to make celebration obvious
+    const overlay = document.createElement('div');
+    overlay.className = 'hurrah-overlay';
+    overlay.innerHTML = '<div class="hurrah">HURRAH!</div>';
+    document.body.appendChild(overlay);
+    setTimeout(() => overlay.classList.add('visible'), 20);
+    // remove later
+    setTimeout(() => {
+        overlay.classList.remove('visible');
+        setTimeout(() => overlay.remove(), 700);
+    }, 1800);
+    return overlay;
 }
 
 function playHurrah() {
