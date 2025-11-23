@@ -50,14 +50,20 @@ h1{margin:0 0 8px;font-size:1.4rem}
 @media (max-width:420px){.spinner{width:48px;height:48px}.dot{width:12px;height:12px}}
 
 /* Confetti */
-.confetti-container{pointer-events:none;position:absolute;inset:0;overflow:visible}
-.confetti-piece{position:absolute;top:0;opacity:0.95;border-radius:2px;transform-origin:center center;animation:confetti-fall 1.6s cubic-bezier(.2,.7,.2,1) forwards, confetti-spin 1.2s linear infinite}
+.confetti-container{pointer-events:none;position:fixed;inset:0;overflow:visible;z-index:9999}
+.confetti-piece{position:absolute;opacity:0.95;border-radius:2px;transform-origin:center center;animation:confetti-fall 1.8s cubic-bezier(.2,.7,.2,1) forwards, confetti-spin 1.2s linear infinite}
 .confetti-fade{opacity:0;transition:opacity .35s ease}
 @keyframes confetti-fall{
-	0%{transform:translateY(-10vh) rotate(0);opacity:1}
+	0%{transform:translateY(0) rotate(0);opacity:1}
 	70%{opacity:1}
 	100%{transform:translateY(110vh) rotate(540deg);opacity:0.95}
 }
+
+/* HURRAH overlay */
+.hurrah-overlay{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:10000;opacity:0;transition:opacity .18s ease}
+.hurrah-overlay .hurrah{background:linear-gradient(90deg,#ffedd5,#fff7ed);color:#92400e;padding:18px 28px;border-radius:14px;font-weight:700;font-size:2.2rem;box-shadow:0 10px 30px rgba(11,22,66,0.18);transform:scale(0.85);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.hurrah-overlay.visible{opacity:1}
+.hurrah-overlay.visible .hurrah{transform:scale(1);}
 @keyframes confetti-spin{
 	0%{transform:rotate(0)}
 	100%{transform:rotate(360deg)}
