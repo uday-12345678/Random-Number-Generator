@@ -9,6 +9,9 @@
 *{box-sizing:border-box}
 body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);margin:0;padding:24px;display:flex;align-items:center;justify-content:center;min-height:100vh}
 .container{width:100%;max-width:520px;background:var(--card);padding:20px;border-radius:10px;box-shadow:0 6px 20px rgba(8,15,30,0.08)}
+
+/* ensure positioning for confetti overlay */
+.container{position:relative;overflow:visible}
 h1{margin:0 0 8px;font-size:1.4rem}
 .instructions{margin:0 0 16px;color:var(--muted)}
 .controls{display:flex;gap:8px;margin-bottom:12px}
@@ -45,6 +48,20 @@ h1{margin:0 0 8px;font-size:1.4rem}
 }
 
 @media (max-width:420px){.spinner{width:48px;height:48px}.dot{width:12px;height:12px}}
+
+/* Confetti */
+.confetti-container{pointer-events:none;position:absolute;inset:0;overflow:visible}
+.confetti-piece{position:absolute;top:0;opacity:0.95;border-radius:2px;transform-origin:center center;animation:confetti-fall 1.6s cubic-bezier(.2,.7,.2,1) forwards, confetti-spin 1.2s linear infinite}
+.confetti-fade{opacity:0;transition:opacity .35s ease}
+@keyframes confetti-fall{
+	0%{transform:translateY(-10vh) rotate(0);opacity:1}
+	70%{opacity:1}
+	100%{transform:translateY(110vh) rotate(540deg);opacity:0.95}
+}
+@keyframes confetti-spin{
+	0%{transform:rotate(0)}
+	100%{transform:rotate(360deg)}
+}
 
 /* Theme: dark */
 :root{transition:background .2s ease,color .2s ease}
